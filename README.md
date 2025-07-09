@@ -1,5 +1,7 @@
 ![Vantage x Scaleway](docs/vantage%20x%20scaleway.png)
 
+[![build](https://github.com/peterfraedrich/vantage-provider-scaleway/actions/workflows/main.yaml/badge.svg?branch=main)](https://github.com/peterfraedrich/vantage-provider-scaleway/actions/workflows/main.yaml) [![Coverage Status](https://coveralls.io/repos/github/peterfraedrich/vantage-provider-scaleway/badge.svg?branch=main)](https://coveralls.io/github/peterfraedrich/vantage-provider-scaleway?branch=main)
+
 # Vantage-Provider-Scaleway
 This connector allows you to export billing data for your Scaleway organization into Vantage for cost tracking purposes.
 
