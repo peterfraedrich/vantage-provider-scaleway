@@ -1,7 +1,14 @@
-env: dev
-loglevel: trace
+##### logging
 
-# vantage
+# env: (dev | prod)
+# dev - pretty logging with colors
+# prod - log JSON
+env: dev
+
+# loglevel: (trace | debug | info | warn | error)
+loglevel: debug
+
+##### vantage
 vantage_custom_provider_token: accss_crdntl_474e50f429175132
 vantage_api_url: https://api.vantage.sh/v2
 

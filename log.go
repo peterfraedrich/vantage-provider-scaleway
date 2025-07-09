@@ -16,7 +16,7 @@ func configureLogging(env string, level string) zerolog.Logger {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	if env != "prod" {
 		log = zerolog.New(zerolog.ConsoleWriter{
-			Out:             os.Stderr,
+			Out:             os.Stdout,
 			FormatLevel:     formatLevel,
 			FormatFieldName: formatFieldName,
 		}).With().Timestamp().Logger()

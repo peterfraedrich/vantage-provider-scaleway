@@ -33,23 +33,27 @@ type FOCUS struct {
 }
 
 type ScalewayConsumptionResponse struct {
-	TotalCount                int64     `json:"total_count"`
-	TotalDiscountUntaxedValue float64   `json:"total_discount_untaxed_value"`
-	UpdatedAt                 time.Time `json:"updated_at"`
-	Consumptions              []struct {
-		Value struct {
-			CurrencyCode string `json:"currency_code"`
-			Units        int64  `json:"units"`
-			Nanos        int64  `json:"nanos"`
-		}
-		ProductName    string `json:"product_name"`
-		ResourceName   string `json:"resource_name"`
-		SKU            string `json:"sku"`
-		ProjectID      string `json:"project_id"`
-		CategoryName   string `json:"category_name"`
-		Unit           string `json:"unit"`
-		BilledQuantity string `json:"billed_quantity"`
-	}
+	TotalCount                int64                      `json:"total_count"`
+	TotalDiscountUntaxedValue float64                    `json:"total_discount_untaxed_value"`
+	UpdatedAt                 time.Time                  `json:"updated_at"`
+	Consumptions              []*ScalewayConsumptionItem `json:"consumptions"`
+}
+
+type ScalewayConsumptionItem struct {
+	Value          *ScalewayValue `json:"value"`
+	ProductName    string         `json:"product_name"`
+	ResourceName   string         `json:"resource_name"`
+	SKU            string         `json:"sku"`
+	ProjectID      string         `json:"project_id"`
+	CategoryName   string         `json:"category_name"`
+	Unit           string         `json:"unit"`
+	BilledQuantity string         `json:"billed_quantity"`
+}
+
+type ScalewayValue struct {
+	CurrencyCode string `json:"currency_code"`
+	Units        int64  `json:"units"`
+	Nanos        int64  `json:"nanos"`
 }
 
 type ScalewayListProjectsResponse struct {
