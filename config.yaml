@@ -5,3 +5,9 @@ vantage_api_url: https://api.vantage.sh/v2
 # scaleway
 scaleway_api_url: https://api.scaleway.com
 scaleway_org_id: 8811656d-67df-434f-b2b7-2b91f0f74633
+
+#tags
+tags:
+  Product: WIHP
+  Portfolio: DMP
+  Platform: Scaleway

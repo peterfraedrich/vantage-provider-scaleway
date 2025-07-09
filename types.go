@@ -3,34 +3,36 @@ package main
 import "time"
 
 type Config struct {
-	VantageCustomProviderToken string `yaml:"vantage_custom_provider_token"`
-	VantageAPIUrl              string `yaml:"vantage_api_url"`
-	VantageAPIKey              string `yaml:"vantage_api_key"`
-	ScalewayAPIUrl             string `yaml:"scaleway_api_url"`
-	ScalewayOrgID              string `yaml:"scaleway_org_id"`
-	ScalewayAPIKey             string `yaml:"scaleway_api_key"`
-	ScalewayAPISecret          string `yaml:"scaleway_api_secret"`
+	ChargePeriod               string
+	VantageCustomProviderToken string            `yaml:"vantage_custom_provider_token"`
+	VantageAPIUrl              string            `yaml:"vantage_api_url"`
+	VantageAPIKey              string            `yaml:"vantage_api_key"`
+	ScalewayAPIUrl             string            `yaml:"scaleway_api_url"`
+	ScalewayOrgID              string            `yaml:"scaleway_org_id"`
+	ScalewayAPIKey             string            `yaml:"scaleway_api_key"`
+	ScalewayAPISecret          string            `yaml:"scaleway_api_secret"`
+	Tags                       map[string]string `yaml:"tags"`
 }
 
 type FOCUS struct {
-	BillingCurrency   string
-	ChargeCategory    string // Credit, Refund, Discount, Tax, Usage
-	ChargePeriodStart time.Time
-	ChargePeriodEnd   time.Time
-	ConsumedQuantity  int64
-	ConsumedUnit      string
-	BilledCost        float64
-	RegionId          string
-	ResourceId        string
-	ResourceType      string
-	ServiceCategory   string
-	ServiceName       string
-	Tags              map[string]string
+	BillingCurrency   string  `csv:"omitempty"`
+	ChargeCategory    string  `csv:"omitempty"` // Credit, Refund, Discount, Tax, Usage
+	ChargePeriodStart string  `csv:"omitempty"`
+	ChargePeriodEnd   string  `csv:"omitempty"`
+	ConsumedQuantity  int64   `csv:"omitempty"`
+	ConsumedUnit      string  `csv:"omitempty"`
+	BilledCost        float64 `csv:"omitempty"`
+	RegionId          string  `csv:"omitempty"`
+	ResourceId        string  `csv:"omitempty"`
+	ResourceType      string  `csv:"omitempty"`
+	ServiceCategory   string  `csv:"omitempty"`
+	ServiceName       string  `csv:"omitempty"`
+	Tags              string  `csv:"omitempty"`
 }
 
 type ScalewayConsumptionResponse struct {
 	TotalCount                int64     `json:"total_count"`
-	TotalDiscountUntaxedValue int64     `json:"total_discount_untaxed_value"`
+	TotalDiscountUntaxedValue float64   `json:"total_discount_untaxed_value"`
 	UpdatedAt                 time.Time `json:"updated_at"`
 	Consumptions              []struct {
 		Value struct {

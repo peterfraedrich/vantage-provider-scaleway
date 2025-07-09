@@ -3,32 +3,29 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+	"regexp"
 )
 
 type ScalewayProvider struct{}
 
-func GetConsumption(orgID string, billingPeriod string) (*ScalewayConsumptionResponse, error) {
-
-	return nil, nil
+func (s ScalewayProvider) GetConsumption(orgID string, billingPeriod string) (*ScalewayConsumptionResponse, error) {
+	consumption := &ScalewayConsumptionResponse{}
+	uri := fmt.Sprintf("%s/billing/v2beta1/consumptions?organization_id=%s&billing_period=%s", CONFIG.ScalewayAPIUrl, orgID, billingPeriod)
+	rawBody, err := HTTPRequest(uri, "GET", nil, map[string]string{"X-Auth-Token": CONFIG.ScalewayAPISecret})
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(rawBody, &consumption)
+	if err != nil {
+		return nil, err
+	}
+	return consumption, nil
 }
 
-func getProjects(orgID string) (map[string]string, error) {
+func (s ScalewayProvider) GetProjects(orgID string) (map[string]string, error) {
 	projects := map[string]string{}
-	uri := fmt.Sprintf("%s/account/v3/projects?organization_id=%s", CONFIG.VantageAPIUrl, CONFIG.ScalewayOrgID)
-	req, err := http.NewRequest("GET", uri, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("X-Auth-Token", CONFIG.ScalewayAPISecret)
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		res.Body.Close()
-		return nil, err
-	}
-	defer res.Body.Close()
-	rawBody, err := io.ReadAll(res.Body)
+	uri := fmt.Sprintf("%s/account/v3/projects?organization_id=%s", CONFIG.ScalewayAPIUrl, CONFIG.ScalewayOrgID)
+	rawBody, err := HTTPRequest(uri, "GET", nil, map[string]string{"X-Auth-Token": CONFIG.ScalewayAPISecret})
 	if err != nil {
 		return nil, err
 	}
@@ -41,4 +38,14 @@ func getProjects(orgID string) (map[string]string, error) {
 		projects[p.ID] = p.Name
 	}
 	return projects, nil
+}
+
+func GetRegion(resourceName string) string {
+	patt, _ := regexp.Compile(`(?mi).*\s\-\s(?P<region>.*(PAR|WAW|AMS).*)`)
+	matches := patt.FindStringSubmatch(resourceName)
+	regionIdx := patt.SubexpIndex("region")
+	if len(matches) > 0 {
+		return matches[regionIdx]
+	}
+	return "no-region"
 }
