@@ -1,0 +1,7 @@
+# vantage
+vantage_custom_provider_token: accss_crdntl_474e50f429175132
+vantage_api_url: https://api.vantage.sh/v2
+
+# scaleway
+scaleway_api_url: https://api.scaleway.com
+scaleway_org_id: 8811656d-67df-434f-b2b7-2b91f0f74633
