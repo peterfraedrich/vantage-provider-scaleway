@@ -30,6 +30,7 @@ func loadConfig(filename string) *Config {
 }
 
 func HTTPRequest(uri string, method string, body io.Reader, headers map[string]string) ([]byte, error) {
+	LOG.Debug().Str("uri", uri).Str("method", method).Any("body", body).Any("headers", headers).Msg("Starting HTTP request")
 	req, err := http.NewRequest(method, uri, body)
 	if err != nil {
 		return nil, err
@@ -38,8 +39,14 @@ func HTTPRequest(uri string, method string, body io.Reader, headers map[string]s
 		req.Header.Add(k, v)
 	}
 	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		res.Body.Close()
+	LOG.Debug().Int("status_code", res.StatusCode).Msg("Got HTTP status code")
+	if err != nil || res.StatusCode >= 400 {
+		defer res.Body.Close()
+		if err == nil {
+			rawBody, _ := io.ReadAll(res.Body)
+			return nil, fmt.Errorf("%s", (string(rawBody)))
+
+		}
 		return nil, err
 	}
 	defer res.Body.Close()
@@ -47,20 +54,24 @@ func HTTPRequest(uri string, method string, body io.Reader, headers map[string]s
 	if err != nil {
 		return nil, err
 	}
+	LOG.Trace().Bytes("response_body", rawBody).Msg("HTTP request complete.")
 	return rawBody, nil
 }
 
 func TransformData(consumption *ScalewayConsumptionResponse, projects map[string]string) ([]*FOCUS, error) {
+	LOG.Debug().Msg("Transforming data")
 	f := []*FOCUS{}
 	for _, item := range consumption.Consumptions {
 		tags := CONFIG.Tags
 		tags["Project"] = projects[item.ProjectID]
 		t, err := json.Marshal(tags)
 		if err != nil {
+			LOG.Debug().Err(err).Any("tags", tags).Msg("Error parsing tags, using empty tags")
 			t = []byte{}
 		}
 		consumed, err := strconv.Atoi(item.BilledQuantity)
 		if err != nil {
+			LOG.Debug().Err(err).Str("billed_qty", item.BilledQuantity).Int("consumed", consumed).Msg("Error converting string to int, using 0")
 			consumed = 0
 		}
 		line := &FOCUS{
@@ -78,11 +89,14 @@ func TransformData(consumption *ScalewayConsumptionResponse, projects map[string
 			Tags:              string(t),
 		}
 		f = append(f, line)
+		LOG.Trace().Any("line", line).Msg("Converted line to FOCUS format")
 	}
+	LOG.Debug().Int("lines", len(f)).Msg("Converted consumption to FOCUS format")
 	return f, nil
 }
 
 func MakeCSV(lines []*FOCUS) (string, error) {
+	LOG.Debug().Msg("Converting lines to CSV")
 	txt, err := gocsv.MarshalString(lines)
 	if err != nil {
 		return "", err

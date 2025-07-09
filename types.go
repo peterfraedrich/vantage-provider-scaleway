@@ -3,7 +3,9 @@ package main
 import "time"
 
 type Config struct {
-	ChargePeriod               string
+	Env                        string            `yaml:"env"`
+	LogLevel                   string            `yaml:"loglevel"`
+	ChargePeriod               string            `yaml:"charge_period"`
 	VantageCustomProviderToken string            `yaml:"vantage_custom_provider_token"`
 	VantageAPIUrl              string            `yaml:"vantage_api_url"`
 	VantageAPIKey              string            `yaml:"vantage_api_key"`
